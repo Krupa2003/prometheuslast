@@ -1,8 +1,16 @@
-global:
-  scrape_interval: 5s
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  # namespace: monitoring  # Ensure this is the correct namespace
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 5s
 
-scrape_configs:
-  - job_name: 'my_application'
-    metrics_path: '/metrics'
-    static_configs:
-      - targets: ['172.29.171.239:5200']  # Replace with your app's hostname/IP
+    scrape_configs:
+      - job_name: 'flask-app'
+        metrics_path: '/metrics'
+        static_configs:
+          - targets: ['flask-app:5200']  # Replace with your app's hostname/IP
+      
