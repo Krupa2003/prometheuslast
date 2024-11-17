@@ -1,43 +1,19 @@
 version: '3.7'
 
 services:
-  # Flask application service
-  flask-app:
-    build: .
-    container_name: flask-app
-    ports:
-      - "5200:5200"         # Expose Flask app on port 5200
-    networks:
-      - monitoring
-    environment:
-      - FLASK_APP=app.py
-      - FLASK_RUN_HOST=0.0.0.0
-      - FLASK_RUN_PORT=5200
-
-  # Prometheus service
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
-      - "9300:9090"         # Expose Prometheus on port 9300
-    networks:
-      - monitoring
+      - "9300:9090"
 
-  # Grafana service
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
     ports:
-      - "3300:3000"         # Expose Grafana on port 3300
-    networks:
-      - monitoring
+      - "3300:3000"
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
-
-# Define a custom bridge network
-networks:
-  monitoring:
-    driver: bridge

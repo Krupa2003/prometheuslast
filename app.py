@@ -1,7 +1,9 @@
 from flask import Flask
 from prometheus_client import Counter, generate_latest, REGISTRY, Gauge, Histogram
+from prometheus_flask_exporter import PrometheusMetrics
 
 app = Flask(__name__)
+metrics = PrometheusMetrics(app)
 
 # Example of a simple counter
 REQUEST_COUNT = Counter('request_count', 'Total Request Count')

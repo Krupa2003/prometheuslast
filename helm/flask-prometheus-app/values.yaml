@@ -1,0 +1,115 @@
+# Default values for flask-prometheus-app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Set the replicaset count
+replicaCount: 1
+
+# Container image settings
+image:
+  repository: krupaht/assignprometheus_flask-app:latest # Replace with your actual image name
+  pullPolicy: IfNotPresent
+  tag: latest  # Make sure the tag matches the version of your image
+
+# Image pull secrets (if using private Docker registry)
+imagePullSecrets: []
+
+# Override the name of the Helm release
+nameOverride: ""
+fullnameOverride: ""
+
+# Service account settings
+serviceAccount:
+  create: true  # Create a service account if needed
+  automount: true
+  annotations: {}
+  name: ""
+
+# Pod annotations (optional)
+podAnnotations: {}
+
+# Pod labels (optional)
+podLabels: {}
+
+# Pod security settings
+podSecurityContext: {}
+
+# Container security context settings
+securityContext:
+  runAsUser: 1000
+  runAsNonRoot: true
+  readOnlyRootFilesystem: true
+
+# Service settings
+service:
+  type: NodePort  # Use NodePort to expose the service outside the cluster
+  port: 5200      # Port to access the Flask application
+  targetPort: 5200 # Target port for the Flask app
+  nodePort: 30004  # Expose Flask on a specific node port
+  # You can add ClusterIP or LoadBalancer if you need different service types
+
+# Ingress settings (Optional, can be enabled if using an Ingress controller)
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: flask-prometheus.local  # Update with your domain if using ingress
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+# Resource limits (adjust according to your app's resource requirements)
+resources: {}
+  # Uncomment and set limits and requests if needed:
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+# Liveness and readiness probes to ensure the app is running
+livenessProbe:
+  httpGet:
+    path: /
+    port: 5200
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: 5200
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+# Autoscaling settings (Optional, for auto-scaling the app based on resource utilization)
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+# Define any volumes required (e.g., for Prometheus config files)
+volumes:
+  - name: prometheus-config
+    configMap:
+      name: prometheus-config
+
+# Define volume mounts (e.g., mount Prometheus config in the app container)
+volumeMounts:
+  - name: prometheus-config
+    mountPath: "/etc/prometheus"
+    subPath: prometheus.yml
+    readOnly: true
+
+# Node selectors to assign the app to specific nodes (Optional)
+nodeSelector: {}
+
+# Tolerations (if you want the pods to tolerate specific taints)
+tolerations: []
+
+# Affinity rules to control pod scheduling (Optional)
+affinity: {}
